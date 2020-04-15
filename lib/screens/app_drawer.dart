@@ -9,26 +9,31 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("This is the fooking menu."),
+            title: Text("Navigate."),
             automaticallyImplyLeading: false,
           ),
-          Divider(),
           ListTile(
-            title: Text('the fookin Shop'),
+            title: Text('Items'),
             leading: Icon(Icons.shop),
             onTap: () => Navigator.of(context).pushReplacementNamed('/'),
           ),
-          Divider(),
-          ListTile(
-            title: Text('The fookin Orders'),
-            leading: Icon(Icons.payment),
-            onTap: () => Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName),
+          Divider(
+            color: Colors.blue,
           ),
-          Divider(),
           ListTile(
-            title: Text('The fookin Edit'),
+            title: Text('Orders'),
+            leading: Icon(Icons.payment),
+            onTap: () => Navigator.of(context)
+                .pushReplacementNamed(OrdersScreen.routeName),
+          ),
+          Divider(
+            color: Colors.blue,
+          ),
+          ListTile(
+            title: Text('Admin Panel'),
             leading: Icon(Icons.edit),
-            onTap: () => Navigator.of(context).pushReplacementNamed(UserProductsScreen.routeName),
+            onTap: () => Navigator.of(context)
+                .pushReplacementNamed(UserProductsScreen.routeName),
           ),
         ],
       ),

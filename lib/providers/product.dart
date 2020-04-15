@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
@@ -6,11 +9,27 @@ class Product with ChangeNotifier {
   final String description;
   final double price;
   final String imageUrl;
-  bool isFavorite = false;
+  bool isFavorite;
 
-  void toggleFavorit(){
+  Future<void> toggleFavorit() async {
+    final oldStatus = isFavorite;
+    final url =
+        'https://fluttertutorial-bd6af.firebaseio.com//products/$id.json';
     isFavorite = !isFavorite;
     notifyListeners();
+    try {
+      final response = await http.patch(url,
+          body: jsonEncode({
+            'isFavorite': isFavorite,
+          }));
+      if (response.statusCode >= 400) {
+        isFavorite = oldStatus;
+        notifyListeners();
+      }
+    } catch (error) {
+      isFavorite = oldStatus;
+      notifyListeners();
+    }
   }
 
   Product(
@@ -18,5 +37,6 @@ class Product with ChangeNotifier {
       @required this.title,
       @required this.description,
       @required this.price,
-      @required this.imageUrl});
+      @required this.imageUrl,
+      this.isFavorite = false});
 }

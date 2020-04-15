@@ -4,21 +4,43 @@ import 'package:shop_app/providers/orders.dart';
 import 'package:shop_app/screens/app_drawer.dart';
 import 'package:shop_app/widgets/order_item.dart';
 
-class OrdersScreen extends StatelessWidget {
-
+class OrdersScreen extends StatefulWidget {
   static const routeName = 'orders';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
   @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<Orders>(context);
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        title: Text("The fookin order."),
+        title: Text("Orders."),
       ),
-      body: ListView.builder(
-          itemCount: orderData.orders.length,
-          itemBuilder: (context, index) =>
-              OrderListItem(orderData.orders[index])),
+      body: FutureBuilder(
+        future: Provider.of<Orders>(context, listen: false).fetchOrders(),
+        builder: ((context, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          else {
+            if (dataSnapshot.error == null)
+              return Consumer<Orders>(
+                builder: (context, orderData, child) => ListView.builder(
+                    itemCount: orderData.orders.length,
+                    itemBuilder: (context, index) =>
+                        OrderListItem(orderData.orders[index])),
+              );
+            else
+              Center(
+                  child: Text(
+                      "Error while loading the order list, please check your internet Connection."));
+          }
+        }),
+      ),
     );
   }
 }
