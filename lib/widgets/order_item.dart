@@ -27,19 +27,23 @@ class _OrderListItemState extends State<OrderListItem> {
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text('\$${widget.order.amount}',
+            title: Text('Cout : ${widget.order.amount} TND',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.bold,
                 )),
             subtitle: Text(
-              DateFormat('dd-MMM-yyyy').format(widget.order.time),
+              'Commande lancée le : ' +
+                  DateFormat('dd-MMM-yyyy hh:ss').format(widget.order.time),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_more : Icons.expand_more),
+              icon: Icon(
+                _expanded ? Icons.expand_more : Icons.expand_more,
+                color: Colors.black87,
+              ),
               onPressed: () {
                 setState(() {
                   _expanded = !_expanded;
@@ -54,7 +58,7 @@ class _OrderListItemState extends State<OrderListItem> {
               child: ListView(
                 children: widget.order.products
                     .map((prod) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween  ,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
                               prod.title,
@@ -63,10 +67,11 @@ class _OrderListItemState extends State<OrderListItem> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            Divider(),
                             Text(
-                              '${prod.quantity} x \$${prod.price}',
+                              '${prod.quantity} x ${prod.price} TND',
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 15,
                                 color: Colors.grey,
                               ),
                             )

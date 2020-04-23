@@ -9,8 +9,13 @@ class CartListItem extends StatelessWidget {
   final String title;
   final String productId;
 
-  CartListItem(
-      {this.id, this.price, this.quantity, this.title, this.productId});
+  CartListItem({
+    this.id,
+    this.price,
+    this.quantity,
+    this.title,
+    this.productId,
+  });
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -18,17 +23,17 @@ class CartListItem extends StatelessWidget {
         return showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: Text('Are you sure?'),
-                  content: Text('Do you want to remove the item?'),
+                  title: Text('Confirmation'),
+                  content: Text('Vous voulez supprimer cet element du panier?'),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('No'),
+                      child: Text('Non'),
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
                     ),
                     FlatButton(
-                      child: Text('Yes'),
+                      child: Text('Oui'),
                       onPressed: () {
                         Navigator.of(context).pop(true);
                       },
@@ -60,10 +65,10 @@ class CartListItem extends StatelessWidget {
               leading: CircleAvatar(
                 child: Padding(
                     padding: EdgeInsets.all(5),
-                    child: FittedBox(child: Text("\$ $price"))),
+                    child: FittedBox(child: Text("$price TND"))),
               ),
               title: Text(title),
-              subtitle: Text("Total \$ ${(price * quantity)}"),
+              subtitle: Text("Total ${(price * quantity)} TND"),
               trailing: Text(quantity.toString() + " x "),
             ),
           )),

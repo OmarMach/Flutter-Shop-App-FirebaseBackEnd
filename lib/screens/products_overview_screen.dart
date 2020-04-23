@@ -22,7 +22,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   void initState() {
     _isLoading = true;
     // Provider.of<Products>(context, listen: false).addDummyDataToServer();
-    Provider.of<Products>(context, listen: false).fetchData().then((_) {
+    Provider.of<Products>(context, listen: false).fetchData(true).then((_) {
       setState(() {
         _isLoading = false;
       });
@@ -35,10 +35,10 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        title: Text("The fookin item list."),
+        title: Text("Articles disponibles"),
         actions: <Widget>[
           PopupMenuButton(
-            icon: Icon(Icons.more_vert),
+            icon: Icon(Icons.filter_list),
             onSelected: (FilterOptions selectedValue) {
               setState(() {
                 if (selectedValue == FilterOptions.Favorites)
@@ -49,9 +49,12 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             },
             itemBuilder: (_) => [
               PopupMenuItem(
-                  child: Text('Show only Favorites'),
+                  child: Text('Afficher les favoris'),
                   value: FilterOptions.Favorites),
-              PopupMenuItem(child: Text('Show All'), value: FilterOptions.All),
+              PopupMenuItem(
+                child: Text('Afficher tous les articles'),
+                value: FilterOptions.All,
+              ),
             ],
           ),
           Consumer<Cart>(

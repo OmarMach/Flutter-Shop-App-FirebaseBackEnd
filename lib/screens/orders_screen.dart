@@ -17,7 +17,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        title: Text("Orders."),
+        title: Text("Commandes"),
       ),
       body: FutureBuilder(
         future: Provider.of<Orders>(context, listen: false).fetchOrders(),
@@ -30,14 +30,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
             if (dataSnapshot.error == null)
               return Consumer<Orders>(
                 builder: (context, orderData, child) => ListView.builder(
-                    itemCount: orderData.orders.length,
-                    itemBuilder: (context, index) =>
-                        OrderListItem(orderData.orders[index])),
+                  itemCount: orderData.orders.length,
+                  itemBuilder: (context, index) =>
+                      OrderListItem(orderData.orders[index]),
+                ),
               );
             else
-              Center(
+              return Center(
                   child: Text(
-                      "Error while loading the order list, please check your internet Connection."));
+                      "Veuillez verifier votre connexion internet."));
           }
         }),
       ),

@@ -12,14 +12,21 @@ class OrderItem {
   final DateTime time;
 
   OrderItem({
-    @required @required this.id,
-    this.amount,
+    @required this.id,
+    @required this.amount,
     @required this.products,
     @required this.time,
   });
 }
 
 class Orders with ChangeNotifier {
+  final String token;
+  final String userId;
+  Orders(
+    this._orders,
+    this.token,
+    this.userId,
+  );
   List<OrderItem> _orders = [];
   List<OrderItem> get orders {
     return [..._orders];
@@ -27,7 +34,8 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final timestamp = DateTime.now();
-    final url = 'https://fluttertutorial-bd6af.firebaseio.com//orders.json';
+    final url =
+        'https://fluttertutorial-bd6af.firebaseio.com//orders/$userId.json?auth=$token';
     final response = await http.post(url,
         body: jsonEncode({
           'amount': total,
@@ -51,7 +59,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchOrders() async {
-    final url = 'https://fluttertutorial-bd6af.firebaseio.com/orders.json';
+    final url =
+        'https://fluttertutorial-bd6af.firebaseio.com/orders.json?auth=$token';
     try {
       final response = await http.get(url);
       final List<OrderItem> extractedOrders = [];
@@ -67,7 +76,7 @@ class Orders with ChangeNotifier {
                   .map(
                     (item) => CartItem(
                       id: item['id'],
-                      price: item['price'],
+                      price: double.parse(item['price']),
                       quantity: item['quantity'],
                       title: item['title'],
                     ),
@@ -77,7 +86,7 @@ class Orders with ChangeNotifier {
       });
       _orders = extractedOrders;
     } catch (error) {
-      print('the error is :' + error.toString());
+      print('Error while exacting orders :' + error.toString());
     }
     notifyListeners();
   }

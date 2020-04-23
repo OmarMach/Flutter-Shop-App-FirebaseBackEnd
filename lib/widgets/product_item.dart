@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/product.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
@@ -9,6 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
+    final auth = Provider.of<Auth>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -27,28 +29,35 @@ class ProductItem extends StatelessWidget {
                       icon: Icon(product.isFavorite
                           ? Icons.favorite
                           : Icons.favorite_border),
-                      onPressed: () => product.toggleFavorit(),
-                      color: Theme.of(context).accentColor,
+                      onPressed: () =>
+                          product.toggleFavorit(auth.token, auth.userId),
+                      color: Colors.white,
                     )),
             trailing: IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
                 cart.addItem(product.id, product.title, product.price);
                 Scaffold.of(context).hideCurrentSnackBar();
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Added to the cart."),
-                  action: SnackBarAction(
-                    label: 'UNDO',
-                    onPressed: () {
-                      cart.removeItem(product.id);
-                    },
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Article ajouté dans le panier."),
+                    action: SnackBarAction(
+                      label: 'Annuler',
+                      onPressed: () {
+                        cart.removeItem(product.id);
+                      },
+                    ),
                   ),
-                ));
+                );
               },
-              color: Theme.of(context).accentColor,
+              color: Colors.white,
             ),
             title: Text(
               product.title,
+              textAlign: TextAlign.center,
+            ),
+            subtitle: Text(
+              product.price.toString() + ' Tnd',
               textAlign: TextAlign.center,
             ),
           ),

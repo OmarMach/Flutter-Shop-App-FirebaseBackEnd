@@ -11,17 +11,17 @@ class Product with ChangeNotifier {
   final String imageUrl;
   bool isFavorite;
 
-  Future<void> toggleFavorit() async {
+  Future<void> toggleFavorit(String authToken, String userId) async {
     final oldStatus = isFavorite;
     final url =
-        'https://fluttertutorial-bd6af.firebaseio.com//products/$id.json';
+        'https://fluttertutorial-bd6af.firebaseio.com//userFavorites/$userId/$id.json?auth=$authToken';
     isFavorite = !isFavorite;
     notifyListeners();
     try {
-      final response = await http.patch(url,
-          body: jsonEncode({
-            'isFavorite': isFavorite,
-          }));
+      final response = await http.put(url,
+          body: jsonEncode(
+            isFavorite,
+          ));
       if (response.statusCode >= 400) {
         isFavorite = oldStatus;
         notifyListeners();

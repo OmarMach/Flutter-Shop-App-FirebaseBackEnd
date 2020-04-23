@@ -45,6 +45,10 @@ class Products with ChangeNotifier {
     return [..._items];
   }
 
+  final String authToken;
+  final String userId;
+  Products(this._items, this.authToken, this.userId);
+
   List<Product> get favouriteItems {
     return _items.where((prod) => prod.isFavorite).toList();
   }
@@ -57,14 +61,20 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex > 0) {
       final url =
-          'https://fluttertutorial-bd6af.firebaseio.com//products/$id.json';
-      await http.patch(url,
-          body: json.encode({
-            'title': newProduct.title,
-            'description': newProduct.description,
-            'imageUrl': newProduct.imageUrl,
-            'price': newProduct.price,
-          }));
+          'https://fluttertutorial-bd6af.firebaseio.com//products/$id.json?auth=$authToken';
+      try {
+        final response = await http.patch(url,
+            body: json.encode({
+              'title': newProduct.title,
+              'description': newProduct.description,
+              'imageUrl': newProduct.imageUrl,
+              'price': newProduct.price,
+              'creatorId': userId,
+            }));
+        print(response.statusCode);
+      } catch (error) {
+        print(error);
+      }
       _items[prodIndex] = newProduct;
       notifyListeners();
     }
@@ -72,7 +82,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://fluttertutorial-bd6af.firebaseio.com//products/$id.json';
+        'https://fluttertutorial-bd6af.firebaseio.com//products/$id.json?auth=$authToken';
     final oldIndex = _items.indexWhere((prod) => prod.id == id);
     var oldProd = _items[oldIndex];
     _items.removeWhere((prod) => prod.id == id);
@@ -88,7 +98,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://fluttertutorial-bd6af.firebaseio.com//products.json';
+    final url =
+        'https://fluttertutorial-bd6af.firebaseio.com//products.json?auth=$authToken';
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -97,7 +108,9 @@ class Products with ChangeNotifier {
             'imageUrl': product.imageUrl,
             'price': product.price,
             'isFavorite': product.isFavorite,
+            'creatorId': userId,
           }));
+      print(response.statusCode);
       final newProduct = Product(
           description: product.description,
           imageUrl: product.imageUrl,
@@ -107,18 +120,26 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       notifyListeners();
     } catch (error) {
-      print('the Error is :' + error.toString());
+      print('Error while adding a product :' + error.toString());
       throw error;
     }
   }
 
-  Future<void> fetchData() async {
-    const url = 'https://fluttertutorial-bd6af.firebaseio.com//products.json';
+  Future<void> fetchData([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+    final url =
+        'https://fluttertutorial-bd6af.firebaseio.com//products.json?auth=$authToken$filterString';
+    final favUrl =
+        'https://fluttertutorial-bd6af.firebaseio.com//userFavorites/$userId.json?auth=$authToken';
+
     try {
       final response = await http.get(url);
       final loadedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedItems = [];
       if (loadedData == null) return;
+      final favResponse = await http.get(favUrl);
+      final favData = json.decode(favResponse.body);
       loadedData.forEach((id, prod) {
         loadedItems.add(Product(
           id: id,
@@ -126,7 +147,7 @@ class Products with ChangeNotifier {
           imageUrl: prod['imageUrl'],
           price: prod['price'],
           title: prod['title'],
-          isFavorite: prod['isFavorite'],
+          isFavorite: favData == null ? false : favData[id] ?? false,
         ));
       });
       _items = loadedItems;

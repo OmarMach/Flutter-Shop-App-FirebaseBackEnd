@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart' show Cart;
 import 'package:shop_app/providers/orders.dart';
+import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/widgets/cart_list_item.dart';
 
 class CartScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _CartScreenState extends State<CartScreen> {
     final Cart cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("The cart ok?"),
+        title: Text("Votre Panier"),
       ),
       body: Column(
         children: <Widget>[
@@ -32,6 +33,7 @@ class _CartScreenState extends State<CartScreen> {
             child: Padding(
               padding: EdgeInsets.all(8),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
                     "Total",
@@ -40,7 +42,7 @@ class _CartScreenState extends State<CartScreen> {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$ ${cart.totalAmount}',
+                      '${cart.totalAmount} TND',
                       style: TextStyle(color: Colors.white),
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
@@ -92,7 +94,9 @@ class _OrderNowState extends State<OrderNow> {
       textColor: widget.cart.totalAmount <= 0
           ? Colors.white
           : Theme.of(context).errorColor,
-      child: _isLoading ? CircularProgressIndicator() : Text("Order now."),
+      child: _isLoading
+          ? CircularProgressIndicator()
+          : Text("Lancer la commande."),
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading == true)
           ? () => null
           : () async {
@@ -105,14 +109,18 @@ class _OrderNowState extends State<OrderNow> {
                   widget.cart.totalAmount,
                 );
                 Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text('Items Ordered.'),
+                  content: Text('Commande lancée.'),
+                  action: SnackBarAction(
+                    label: 'Consulter les commandes',
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(OrdersScreen.routeName);
+                    },
+                  ),
                 ));
                 widget.cart.clearCart();
               } catch (error) {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      'Error while ordering the items, please check your internet connection.'),
-                ));
+                Scaffold.of(context).showSnackBar(
+                    SnackBar(content: Text('Erreur de connexion.')));
               }
               setState(() {
                 _isLoading = false;

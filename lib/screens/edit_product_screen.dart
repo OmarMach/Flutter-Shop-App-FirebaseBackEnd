@@ -116,7 +116,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
             onPressed: _saveForm,
           )
         ],
-        title: Text('Edit a product'),
+        title: _editedProduct.id == null
+            ? Text('Add a product')
+            : Text('Edit a product'),
       ),
       body: _isLoading
           ? Center(

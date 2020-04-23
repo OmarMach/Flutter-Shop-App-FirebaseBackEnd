@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/models/http_exception.dart';
@@ -49,7 +48,7 @@ class AuthScreen extends StatelessWidget {
                       // ..translate(-10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.amber,
+                        // color: Colors.amber,
                         boxShadow: [
                           BoxShadow(
                             blurRadius: 8,
@@ -59,12 +58,13 @@ class AuthScreen extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        'Login',
+                        'CheDarek Mobile\n(Alpha version)',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).accentTextTheme.title.color,
-                          fontSize: 50,
+                          fontSize: 30,
                           fontFamily: 'Anton',
-                          fontWeight: FontWeight.normal,
+                          // fontWeight: FontWeight.normal,
                         ),
                       ),
                     ),
@@ -106,11 +106,11 @@ class _AuthCardState extends State<AuthCard> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text('An error occured '),
+              title: Text('Une erreur s\'est produite '),
               content: Text(message),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('okay'),
+                  child: Text('OK'),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -130,10 +130,10 @@ class _AuthCardState extends State<AuthCard> {
     try {
       if (_authMode == AuthMode.Signup) {
         await Provider.of<Auth>(context, listen: false)
-            .login(_authData['email'], _authData['password']);
+            .signup(_authData['email'], _authData['password']);
       } else {
         await Provider.of<Auth>(context, listen: false)
-            .signup(_authData['email'], _authData['password']);
+            .login(_authData['email'], _authData['password']);
       }
     } on HttpException catch (error) {
       var message = 'Authentication failed.';
@@ -204,7 +204,7 @@ class _AuthCardState extends State<AuthCard> {
                   },
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(labelText: 'Mot de passe'),
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
@@ -219,7 +219,7 @@ class _AuthCardState extends State<AuthCard> {
                 if (_authMode == AuthMode.Signup)
                   TextFormField(
                     enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
+                    decoration: InputDecoration(labelText: 'Confirmation du mot de passe'),
                     obscureText: true,
                     validator: _authMode == AuthMode.Signup
                         ? (value) {
@@ -237,7 +237,7 @@ class _AuthCardState extends State<AuthCard> {
                 else
                   RaisedButton(
                     child:
-                        Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+                        Text(_authMode == AuthMode.Login ? 'Se connecter' : 's\'inscrire'),
                     onPressed: _submit,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -249,7 +249,7 @@ class _AuthCardState extends State<AuthCard> {
                   ),
                 FlatButton(
                   child: Text(
-                      '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+                      '${_authMode == AuthMode.Login ? 'S\'inscrire' : 'Se connecter'}'),
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
