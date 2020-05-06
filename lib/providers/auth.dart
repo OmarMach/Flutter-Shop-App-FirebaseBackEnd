@@ -30,7 +30,7 @@ class Auth with ChangeNotifier {
 
   Future<void> signup(String email, String password) async {
     var url =
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDS8-viHUGeh7Tgg0eEZUGOofXaE2_r3Cs';
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzadSyDS8-viHUGeh7Tgg0eEZUGOofXaE2_r3Cs';
     var response = await http.post(url,
         body: json.encode({
           'email': email,
